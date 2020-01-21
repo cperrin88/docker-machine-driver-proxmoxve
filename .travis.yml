@@ -1,12 +1,20 @@
 language: go
 
 go:
-- master
+  - master
+
+script: go test -v ./test
+
+before_deploy:
+  - GOOS=linux GOARCH=amd64 go build -o ./bin/docker-machine-driver-proxmoxve.$GOOS.$GOARCH ./cmd/docker-machine-driver-proxmoxve
+  - GOOS=linux GOARCH=arm64 go build -o ./bin/docker-machine-driver-proxmoxve.$GOOS.$GOARCH ./cmd/docker-machine-driver-proxmoxve
+  - GOOS=linux GOARCH=arm go build -o bin/docker-machine-driver-proxmoxve.$GOOS.$GOARCH ./cmd/docker-machine-driver-proxmoxve
+  - GOOS=darwin GOARCH=amd64 go build -o bin/docker-machine-driver-proxmoxve.$GOOS.$GOARCH ./cmd/docker-machine-driver-proxmoxve
+  - GOOS=windows GOARCH=amd64 go build -o bin/docker-machine-driver-proxmoxve.$GOOS.$GOARCH ./cmd/docker-machine-driver-proxmoxve
 
 deploy:
   provider: releases
-  api_key:
-    secure: j2F2/RIKN2AEL+nlvECuuH1etT5DdjjLgIemp2rVSGQi5GVEYqhycYqVaSOWGdgsjK9zswDETaWt3IKdHSLbId2EkOfiNtN60Bi7X5Ect89s6LKoYq0w937vivXCverdxh7/zI6nw/a6mJbrw4cny0nTecRm0TcAyJbjBBfVNPWOzBgslgweez5HfsJvFWmo3uZvrZUbIRkmjlaqG3bHkGhmmA0Op5OY8ZQFQttmwB+n2dadhzz4xMkyQ7ThR7+ADgNVDGiQqGkdWJT4VkI7iGniW6t5aCpXsdwvOTS8pdihV38akU7hRxzqg2b7ho0Z7p3dTK8Fmm5bZ6pJQ6yfq011Q77C6+eg7n2EZz0LwvFxndP5SVSaE1REV4Ln015LQXoo7YYEGDw2K7p0qfBPPeYGwdK2G3//izF9Kpj4iCh4uCWLCC4cx3jE0Z5d4d4OageCmt0ebrenHkvCzukP6b+773GH+uusTCwZxEqFMIH3rZRca6sNaPJdX42VoV2ndYVQpHeJ6Qh7y+CE/EzS/eOblhpVP2WLF0BnNpRBGzRqaWEht4UkyyVPvr7H/CCrYMlqEzMPayy3LGgahHF69uKdO82gIm+6K0HQHxRgrKKSlQiBLA6+iuhiqqw06MuFJ6QjYHl2njxEP4GEPN1EYqfICIlk9iUHkt1S+mUlHkg=
+  api_key: $release_token
   file: bin/*
   on:
     tags: true
